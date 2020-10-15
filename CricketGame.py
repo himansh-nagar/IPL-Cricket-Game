@@ -1,249 +1,273 @@
 import random 
-# from batbowl import innings,innings_2
-# from batbowl import innings_2
-# variabless
+import json
+from prettytable import PrettyTable
+# importing colors
+with open('./color.json') as colors:
+	colors = json.load(colors)
+# importing all the teams of IPL from teams.json file
+with open('./teams.json') as teams:
+	teams = json.load(teams)
 
-
-
-print('\u001b[34m-----------------------INDIAN PREMIUM LEAUGE--------------------------------------------------------','\n')
-print("\u001b[31m___________________________BY 'HIMANSHU NAGAR_______________________________________________________",'\n')
-print('\u001b[34m<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< PRESS ENTER TO CONTINUE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>','\n')
+# welcome
+print(colors['blue'], '-----------------------INDIAN PREMIUM LEAUGE--------------------------------------------------------','\n')
+print(colors['red'],"___________________________BY 'HIMANSHU NAGAR_______________________________________________________",'\n')
+print(colors['green'],'\<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< PRESS ENTER TO CONTINUE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>','\n')
+# pressing enter as input 
 enter=input()
 
-
-
+# list of runs
 runs=[1,2,3,4,6]
-
 balls_option=['leg spin','googly','off spin','arm ball','bouncer','leg cutter','out swinger','reverse swing','yorker','slower ball']
 out=['run out','caught and bold','stumped','caught','bowled']
-
 shots_option=['cut','flick','step out and hit','cover drive','drive','stright drive','helicopter','pull']
-
-print('\u001b[32;1mchosse your team ','\n')
-
-# teams
-
 opponent_team=['CSK','MI','RCB','KKR','DC','RR','SRH','KXIP']
-teams={'CSK':['MS Dhoni', 'Josh Hazlewood' ,'Kedar Jadhav', 'Harbhajan Singh', 'Piyush Chawla', 'Ambati Rayudu', 'Suresh Raina', 'Imran Tahir','Deepak Chahar', 'Faf du Plessis', 'Shardul Thakur'],
-	   'MI':['Rohit Sharma','surya kumar yadav','chris lynn','Quinton de kock','kieron pollard','krunal pandya','ishan kishan','hardik pandya','trent boult','jasprit bumrah','rahul Chahar'],
-	   'RCB':['Virat Kohli','AB de Villiers','aron finch','moeen ali','parthiv patel','shivam dube','washinton sunder','chris morris','umesh yadav','mohammed siraj','dale steyn'],
-	   'KKR':['andre russell','dinesh kartik','kuldeep yadav','nitesh rana','rinku singh','shivam mavi','shubman gill','sunil narine','pat cummins','Eoin morgan','prasidh krishna'],
-	   'DC':['Shreyas Iyer','Prithvi Shaw', 'Ajinkya Rahane', 'Shikhar Dhawan', 'Jason Roy','Ishant Sharma', 'Amit Mishra','R Ashwin', 'Marcus Stoinis', 'Chris Woakes', 'Rishabh Pant'],
-	   'RR':['Steve Smith', 'Robin Uthappa', 'David Miller', 'Ankit Rajpoot', 'Mayank Markande', 'Jofra Archer', 'Shreyas Gopal', 'Varun Aaron', 'Jaydev Unadkat', 'Ben Stokes','Jos Buttler'],
-	   'SRH':['kane williamson','david warner','manish pandey','Virat Singh', 'Priyam Garg', 'Abdul Samad', 'Bhuvneshwar Kumar', 'Khaleel Ahmed', 'Sandeep Sharma', 'Siddharth Kaul', 'Billy Stanlake'],
-	   'KXIP':['Chris Gayle', 'Mayank Agarwal', 'Karun Nair', 'Sarfaraz Khan', 'Mandeep Singh', 'Sheldon Cottrell', 'Ishan Porel', 'Ravi Bishnoi', 'Mohammed Shami','KL Rahul','Glenn Maxwell'],
-	   }
-keys=teams.keys()
-for keys in teams:
-	print(keys)
 
+print(colors['white'],'chosse your team \n')
 
+# show all teams for seletion
+for show_teams in teams:
+	print(show_teams)
+
+# slection of p1 and p2
 player_1=input('chosse your team    ').upper()
+print('\n')
 opponent_team.remove(player_1)
 player_2=random.choice(opponent_team)
-print('\n','\n','\t','\t','\u001b[31;1m',player_1,'\n','\t','\t','VS','\n','\t','\t',player_2)
 print('\n','\n')
-print('\t','\t','\u001b[34;1mYOUR TEAM')
-for player in teams[player_1]:
-	print('\t',player)
-print()
-print()
-print('\t','\t','\u001b[31;1mOPPONENT TEAM')
-for player2 in teams[player_2]:
-	print('\t',player2)
 
+def printTeams(player,team,color):
+	print("--",colors[color],player,"--")
+	print()
+	for teamMember in teams[player]:
+		print(teamMember)
+	print()
+	print()
 
-def innings():
-	list_of_balls=[]
+printTeams(player_1,teams,"blue")
+print(colors['white'],"\tVS")
+print('\n')
+printTeams(player_2,teams,"red")
+
+def p1Batting(p1,p2):
+	# p1 is batting team and p2 is balling team
 	p1_total=0
-	# batting_team,bowling_team=player_1,player_2
-	player_run={}
+	players_data={}
+	# wickets are 11 and wicktes are started from 1 because we have list of batsmen and we have to select striker and non-striker by index [0] and [1] then we have to increment wicket+=1
 	wickets=1
-	all_batsmen=teams[player_1]
-	bowling_team=teams[player_2]
-	# all_batsmen=iter([batting_team])
-	striker=all_batsmen[wickets-1]
-	non_striker=all_batsmen[wickets]
-	score_of_player=0
+	batting_team=teams[p1]
+	bowling_team=teams[p2]
+	striker=batting_team[wickets-1]
+	non_striker=batting_team[wickets]
+	score_of_striker=0
+	score_of_NONstriker = 0
+	# adding striker and non-striker data to players data dict
+	players_data[striker] = score_of_striker
+	players_data[non_striker] = score_of_NONstriker
 	overs=0
-	print('\n','\n','\n')
-	print('\n','\t',f'\u001b[47m{striker} and {non_striker} has came on felid')
-	for over in range(5):
+	print('\n\n\n')
+	print(colors['white'],'\n\t',f'{striker} and {non_striker} has came on felid')
+	# total overs in a match
+	for over in range(1):
+		# choosing a bowler
 		bowler=random.choice(bowling_team)
-		if over==5 or wickets==10:
+		if wickets==11:
 			break
-		print('\t'f'\u001b[47m{bowler} is on bolwing',f'{striker} is on strike')
 		for Balls in range(1,7):
-			print('\n','\n','\t',f'\u001b[47m{bowler} has came to bowl')
-			run=random.choice(runs)
+			print( '\n',colors['cyan'],'_'*200,colors['white'],'\n')
+			print('\t'f'{bowler} is on bolwing',f'{striker} is on strike')
+			run = 0
+
+			# batting scoreboard
+			batting_scoreboard = PrettyTable(['batsman','score_of_striker'])
+			batting_scoreboard.add_row([f'* {striker}', score_of_striker ])
+			batting_scoreboard.add_row([non_striker, score_of_NONstriker ])
+			print(batting_scoreboard)
+			print()
+
+			# p1 total score
+			total_batting_score = PrettyTable(['Batting Team','Total Score','Wickets'])
+			total_batting_score.add_row([p1,p1_total,wickets-1])
+			print(total_batting_score)
+			print()
+
+			# bowling scoreBoard
+			bowling_scoreboard = PrettyTable(['bowler','balls','over'])
+			bowling_scoreboard.add_row([bowler,Balls-1,over])
+			print(bowling_scoreboard)
+			print()
+
+			print('\n\n\t',f'{bowler} is ready to bowl')
 			bowl=random.choice(balls_option)
-			print('\n','\n','\t',f'\u001b[41;1m{bowler} bowled {bowl}')
-			print('\n','\n','\t','select your shot     !!!!!!!!!!!!','\n','\n',shots_option)
+			print('\n\n\t',f'{bowler} bowled {bowl}') 
+			print('\n\n\t','select your shot     !!!!!!!!!!!!','\n\n',shots_option)
 			shot=input().lower()
-			if (bowl=='bouncer' or bowl=='slower ball') and shot=='pull':
-				print('\t','\u001b[44;1myeaahhhhooo !!!!!!!!!!!!!''\n','perfect shot','\n','\t',f'you hit {run}')
-				score_of_player+=run
-			elif (bowl=='leg spin' or 'googly') and shot == 'flick':
-				print('\t','\u001b[44;1myeaahhhhooo !!!!!!!!!!!!!''\n','perfect shot','\n','\t',f'you hit {run}')
-				score_of_player+=run
+			if ((bowl=='bouncer' or bowl=='slower ball') and shot=='pull') \
+				or ((bowl=='leg spin' or 'googly') and shot == 'flick') \
+				or ((bowl=='arm ball' or bowl=='off spin') and (shot=='cover drive' or shot =='drive')) \
+				or ((bowl=='leg cutter' or bowl=='out swinger') and shot=='stright drive') or (bowl=='yorker' and shot=='helicopter'): # \ is used for multi-line if statements
+				run=random.choice(runs)
+				print('\t','yeaahhhhooo !!!!!!!!!!!!!''\n','perfect shot','\n\t',f'you hit {run}')
+				score_of_striker+=run
+				p1_total+=run
+				players_data[striker] = score_of_striker
 
-			elif (bowl=='arm ball' or bowl=='off spin') and (shot=='cover drive' or shot =='drive'):
-				print('\t','\u001b[44;1myeaahhhhooo !!!!!!!!!!!!!''\n','perfect shot','\n','\t',f'you hit {run}')
-				score_of_player+=run
-
-			elif (bowl=='leg cutter' or bowl=='out swinger') and shot=='stright drive':
-				print('\t','\u001b[44;1myeaahhhhooo !!!!!!!!!!!!!''\n','perfect shot','\n','\t',f'you hit {run}')
-				score_of_player+=run
-			elif bowl=='yorker' and shot=='helicopter':
-				print('\t','\u001b[47;1myeaahhhhooo !!!!!!!!!!!!!''\n','perfect shot','\n','\t',f'{player_2} has hit {run}')
-				score_of_player+=run
 			else:
-				print('\n','\n','\u001b[41;1mopps you played a wrong shot   ')
-				wickets+=1
-				
+				print('\n\n','Opps you played a wrong shot   ')
 				w_o=random.choice(out)
 				print(w_o)
-				print(f'\u001b[41;1m{striker} is out at {score_of_player} by {bowler}')
-				striker=all_batsmen[wickets-1]
-				player_run[str(striker)]=score_of_player
-				score_of_player=0
-				p1_total+=score_of_player
+				print(f'{striker} is {w_o} at {score_of_striker} by {bowler}')
+				players_data[str(striker)]=score_of_striker
+				wickets+=1
+				striker=batting_team[wickets]
+				score_of_striker=0
+
 			if run%2==0:
 				pass
 			if run%2!=0:
+				score_of_striker,score_of_NONstriker = score_of_NONstriker , score_of_striker
 				non_striker,striker=striker,non_striker
-			list_of_balls.append(run)
-		print(f'{striker} and {non_striker} are playing')
-		print(f'\u001b[32;1m{striker} at {score_of_player} ',f'{bowler} has completed his over')
-		print('\n','\n','\n','\n')
-	over+=1
-	print(player_run)
 
-def innings_2():
-	list_of_balls=[]
+		print(f'{striker} at {score_of_striker} ',f'\n{bowler} has completed his over')
+		print('\n','\n','\n','\n')
+	return p1_total
+
+
+
+# if p1 bowls then exceuts this function
+def p1Bowling(p1,p2):
+	# p1 is batting team and p2 is balling team
 	p2_total=0
-	# batting_team,bowling_team=player_1,player_2
-	player_run={}
+	players_data={}
+	# wickets are 11 and wicktes are started from 1 because we have list of batsmen and we have to select striker and non-striker by index [0] and [1] then we have to increment wicket+=1
 	wickets=1
-	all_batsmen=teams[player_2]
-	bowling_team=teams[player_1]
-	# all_batsmen=iter([batting_team])
-	striker=all_batsmen[wickets-1]
-	non_striker=all_batsmen[wickets]
-	list_of_played_batsmen=[]
-
-	score_of_player=0
+	batting_team=teams[p2]
+	bowling_team=teams[p1]
+	striker=batting_team[wickets-1]
+	non_striker=batting_team[wickets]
+	score_of_striker=0
+	score_of_NONstriker = 0
+	# adding striker and non-striker data to players data dict
+	players_data[striker] = score_of_striker
+	players_data[non_striker] = score_of_NONstriker
 	overs=0
-	
-	print('\n','\n','\n')
-	print('\n','\t',f'\u001b[34;1m{striker} and {non_striker} has came on felid')
-	for over in range(5):
+	print('\n\n\n')
+	print(colors['white'],'\n\t',f'{striker} and {non_striker} has came on felid')
+	# total overs in a match
+	for over in range(1):
+		# choosing a bowler
 		bowler=random.choice(bowling_team)
-		batmens=random.choice(all_batsmen)
-		batmen=batmens
-		if over==5 or wickets==10:
+		if wickets==11:
 			break
-		if batmens in list_of_played_batsmen:
-			continue
-		print('\t'f'\u001b[34;1m{bowler} is on bolwing',f'{striker} is on strike')
 		for Balls in range(1,7):
-			print('\n','\n','\t',f'\u001b[33;1m{bowler}  are going to bowl')
-			print('\n','\n','\t','\u001b[37mselect your ball     !!!!!!!!!!!!','\n','\n',balls_option)
-			bowl=input().lower()
-			# print('\n','\n','\t',f'{bowler} has came to bowl')
-			run=random.choice(runs)
+			print( '\n',colors['cyan'],'_'*200,colors['white'],'\n')
+			print('\t'f'{bowler} is on bolwing',f'{striker} is on strike')
+			run = 0
+
+			# batting scoreboard
+			batting_scoreboard = PrettyTable(['batsman','score_of_striker'])
+			batting_scoreboard.add_row([f'* {striker}', score_of_striker ])
+			batting_scoreboard.add_row([non_striker, score_of_NONstriker ])
+			print(batting_scoreboard)
+			print()
+
+			# p2 total score
+			total_batting_score = PrettyTable(['Batting Team','Total Score','Wickets'])
+			total_batting_score.add_row([p2,p2_total,wickets-1])
+			print(total_batting_score)
+			print()
+
+			# bowling scoreBoard
+			bowling_scoreboard = PrettyTable(['bowler','balls','over'])
+			bowling_scoreboard.add_row([bowler,Balls-1,over])
+			print(bowling_scoreboard)
+			print()
+
+			print('\n\n\t',f'{bowler} is ready to bowl')
 			shot=random.choice(shots_option)
-			
-			if (bowl=='bouncer' or bowl=='slower ball') and shot=='pull':
-				print('\t','\u001b[47;1myeaahhhhooo !!!!!!!!!!!!!''\n','perfect shot','\n','\t',f'you hit {run}')
-				score_of_player+=run
-			elif (bowl=='leg spin' or 'googly') and shot == 'flick':
-				print('\t','\u001b[47;1myeaahhhhooo !!!!!!!!!!!!!''\n','perfect shot','\n','\t',f'{batmen} has hit {run}')
-				score_of_player+=run
-			elif (bowl=='arm ball' or bowl=='off spin') and (shot=='cover drive' or shot =='drive'):
-				print('\t','\u001b[47;1myeaahhhhooo !!!!!!!!!!!!!''\n','perfect shot','\n','\t',f'{batmen} has hit {run}')
-				score_of_player+=run
-			elif (bowl=='leg cutter' or bowl=='out swinger') and shot=='stright drive':
-				print('\t','\u001b[47;1myeaahhhhooo !!!!!!!!!!!!!''\n','perfect shot','\n','\t',f'{batmen} has hit {run}')
-				score_of_player+=run
-			elif bowl=='yorker' and shot=='helicopter':
-				print('\t','\u001b[47;1myeaahhhhooo !!!!!!!!!!!!!''\n','perfect shot','\n','\t',f'{batmen} has hit {run}')
-				score_of_player+=run
+			print('\n\n\t','select your ball ->','\n\n',balls_option)
+			bowl=input().lower()
+			print('\n\n\t',f'{bowler} bowled {bowl}') 
+			if ((bowl=='bouncer' or bowl=='slower ball') and shot=='pull') \
+				or ((bowl=='leg spin' or 'googly') and shot == 'flick') \
+				or ((bowl=='arm ball' or bowl=='off spin') and (shot=='cover drive' or shot =='drive')) \
+				or ((bowl=='leg cutter' or bowl=='out swinger') and shot=='stright drive') or (bowl=='yorker' and shot=='helicopter'): # \ is used for multi-line if statements
+				run=random.choice(runs)
+				print('\t','yeaahhhhooo !!!!!!!!!!!!!''\n','perfect shot','\n\t',f'CPU hits {run}')
+				score_of_striker+=run
+				p2_total+=run
+				players_data[striker] = score_of_striker
+
 			else:
-				print('\n','\n',f'\u001b[41;1mopps opponent_player has played a wrong shot   ')
-				wickets+=1
+				print('\n\n','Opps CPU played a wrong shot   ')
 				w_o=random.choice(out)
 				print(w_o)
-				print(f'\u001b[41;1m{striker} is out at {score_of_player} by {bowler}')
-				striker=all_batsmen[wickets-1]
-				player_run[str(striker)]=score_of_player
-				score_of_player=0
-				batmens=random.choice(all_batsmen)
-				list_of_played_batsmen.append(batmens)
-				# p2_total+=score_of_player
+				print(f'{striker} is {w_o} at {score_of_striker} by {bowler}')
+				players_data[str(striker)]=score_of_striker
+				wickets+=1
+				striker=batting_team[wickets]
+				score_of_striker=0
 			if run%2==0:
 				pass
 			if run%2!=0:
+				score_of_striker,score_of_NONstriker = score_of_NONstriker , score_of_striker
 				non_striker,striker=striker,non_striker
-			list_of_balls.append(run)
 
-		print(f'\u001b[32;1m{striker} at {score_of_player} ',f'{bowler} has completed his over')
-		print(f'{striker} and {non_striker} are playing')
+		print(f'{striker} at {score_of_striker} ',f'\n{bowler} has completed his over')
 		print('\n','\n','\n','\n')
-	over+=1
-	print(player_run)	
+	return p2_total
 
 
 
-#   TOSS 
 
-
-print('\n','\n','\t','\t','\u001b[42;1mTOSS TIME ')
-print('\n','\n','\t','\t',"\u001b[42;1mWhat's your call ?   ",'\n','\t','\u001b[42;1mchosse head or tail  ')
+# #   TOSS 
+print(colors['white'],'\n\n\t\t','TOSS TIME ')
+print('\n\n\t',"What's your call ?   ",'\n\t\nchosse head or tail  ')
 coins=['HEAD','TAILS']
+bat_or_ball = ['BAT','BOWL']
 coin=random.choice(coins)
 p1_call = input().upper()
-if p1_call==coin:
-	print('\n','\n','\t','\t','\u001b[34;1myooo!!!!!!!!!!!!!','\n','\n','\t','\t','u001b[34;1mYOU WON THE TOSS')
-	print('\n','\n','\t','\t','\u001b[44mWHAT YOU WANT TO CHOSSE BAT OR BOWL'    )
+if p1_call == coin:
+	print(colors['green'],'\n\n\t\t','!!!!!!!!!!!!!','\n\n\t\t','YOU WON THE TOSS')
+	print(colors['white'],'\n\n\t\t','WHAT YOU WANT TO CHOSSE BAT OR BOWL'    )
 	bob=input().upper()
-	if bob=='BAT':
-		innings()
-		print('\n','\n','\n','\n','\n','\t'," \u001b[40;1mINNINGS HAS BEEN OVER   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",'\n',p1_total)
+	if bob==bat_or_ball[0]:
+		print("you chose to ------",bat_or_ball[0],'\n')
+		score_p1 = p1_ing_score = p1Batting(player_1,player_2)
+		print('\n\n\t',"p1 Batting HAS BEEN OVER they scored -> -------",score_p1)
+		print('\n\n\t',"CPU Batting NOW THEY HAVE TO SCORE  -> -------",score_p1+1)
+		print('\<<<<<<<<< PRESS ENTER TO CONTINUE >>>>>>>>>','\n')
+		# pressing enter as input 
+		enter=input()
+		score_p2 = p1Bowling(player_1,player_2)
+		print('\n\n\t',"p2 Batting HAS BEEN OVER they scored -> -------",score_p2)
 		
+	elif bob==bat_or_ball[1]:
+		print("you chose to ------",bat_or_ball[1],'\n')
+		score_p2 = p1Bowling(player_1,player_2)
+		print('\n\n\t',"CPU Batting HAS BEEN OVER they scored -> -------",score_p2)
+		print('\n\n\t',"CPU BATTING HAS OVER! NOW YOU HAVE TO SCORE  -> -------",score_p2+1)
+		print('\<<<<<<<<< PRESS ENTER TO CONTINUE >>>>>>>>>','\n')
+		# pressing enter as input 
+		enter=input()
+		score_p1 = p1_ing_score = p1Batting(player_1,player_2)
+		print('\n\n\t',"p1 Batting HAS BEEN OVER they scored -> -------",score_p1)
 
-	if bob=='BOWL':
-		print('\n','\n','\t',f'\u001b[44;1m{player_1} has chosen to bowl')
-		innings_2()
-	print('\n','\n','\n','\n','\n','\t',f'\u001b[37;1m{player_1} has scored {p1_total}','\n','\n','\n','\n','\n','\t',f'\u001b[37;1m{player_2} needs {p1_total} to win')
-	print('\n','\n','\n','\n','\n','\t'," INNINGS HAS BEEN OVER   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",'\n',p1_total)
-
-		
-	# print('\n','\n','\n','\n','\n','\t'," INNINGS HAS BEEN OVER   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",'\n',p2_total)
-
-if p1_call!=coin:
-	print(f'\n','\t','\t','ohhh !!!!!!!!!!','\n','\t','\t','YOU LOSS THE TOSS ','\n','\t','\t',f'{player_2} has decided to bat frist')
-	innings_2()
-	print('\n','\n','\n','\n','\n','\t'," \u001b[37;1mINNINGS HAS BEEN OVER   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",'\n',p2_total)
-	print('\n','\n','\n','\n','\n','\t',f'{player_2} has scored {p2_total}','\n','\n','\n','\n','\n','\t',f'{player_2} needs {p2_total} to win')
-	print('\n','\n','\n','\n','\n','\t'," \u001b[41;1mINNINGS HAS BEEN OVER   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",'\n',p2_total)
-	innings()
-	print('\n','\n','\n','\n','\n','\t'," \u001b[37;1mINNINGS HAS BEEN OVER   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",'\n',p1_total)
-
-
-
-
-
-### winner ######
-if p1_total>p2_total:
-	print( '\u001b[41;1mmatch has been ended','\n','\n', f'\u001b[41;1m{player_1} has woned the match  !!!!!!!!!!!!!!!')
 else:
-	print( '\u001b[44;1mmatch has been ended','\n','\n', f'\u001b[44;1m{player_2} has woned the match  !!!!!!!!!!!!!!!')
+	print(colors['red'],'\n\n\t\t','!!!!!!!!!!!!!','\n\n\t\t','YOU LOSS THE TOSS')
+	score_p2 = p1Bowling(player_1,player_2)
+	print('\n\n\t',"cpu Batting HAS BEEN OVER they scored -> -------",score_p2)
+	print('\n\n\t',"CPU BATTING HAS OVER! NOW YOU HAVE TO SCORE  -> -------",score_p2+1)
+	print('\<<<<<<<<< PRESS ENTER TO CONTINUE >>>>>>>>>','\n')
+	# pressing enter as input 
+	enter=input()
+	score_p1 = p1_ing_score = p1Batting(player_1,player_2)
+	print('\n\n\t',"p1 Batting HAS BEEN OVER they scored -> -------",score_p1)
 
 
-print()
-print()
-print()
-print()
-print()
+# ### winner ######
+if score_p1 > score_p2: print("p1 wins")
+elif score_p1 < score_p2: print("CPU wins")
+else: print("match tied")
+
+
 
